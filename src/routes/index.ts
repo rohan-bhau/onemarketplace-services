@@ -1,6 +1,6 @@
 import { response, Router } from "express";
-import { SERVICE_NAME } from "../config/redis.js";
 import { ApiResponse } from "../types/common.types.js";
+import { SERVICE_NAME } from "../config/constants.js";
 
 
 export const apiRouter = Router()
