@@ -8,6 +8,20 @@
       "when": 1789885012966,
       "tag": "0000_fine_terrax",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790092805198,
+      "tag": "0001_same_skaar",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790093427676,
+      "tag": "0002_outstanding_zodiak",
+      "breakpoints": true
     }
   ]
 }
