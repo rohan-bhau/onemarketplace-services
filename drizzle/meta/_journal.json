@@ -22,6 +22,20 @@
       "when": 1790093427676,
       "tag": "0002_outstanding_zodiak",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791637018704,
+      "tag": "0003_icy_fixer",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791719538285,
+      "tag": "0004_famous_ser_duncan",
+      "breakpoints": true
     }
   ]
 }

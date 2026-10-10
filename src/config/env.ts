@@ -30,5 +30,6 @@ export const env = {
         port: parsePort(process.env.REDIS_PORT ?? "6379"),
         password: process.env.REDIS_PASSWORD ?? undefined,
         database: parseRedisDatabase(process.env.REDIS_DB)
-    }
+    },
+    imageKitPrivateKey: process.env.IMAGE_KIT_PRIVATE_KEY
 } as const;

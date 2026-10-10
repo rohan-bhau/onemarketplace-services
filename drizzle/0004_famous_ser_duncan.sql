@@ -1,0 +1,1 @@
+ALTER TABLE "freelancer_portfolios" ADD COLUMN "description" text NOT NULL;

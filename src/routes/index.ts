@@ -3,11 +3,13 @@ import { ApiResponse } from "../types/common.types.js";
 import { SERVICE_NAME } from "../config/constants.js";
 import { authRouter } from "../modules/auth/auth.route.js";
 import { clientRouter } from "../modules/client/client.route.js";
+import { freelancerRouter } from "../modules/freelancer/freelancer.route.js";
 
 
 export const apiRouter = Router()
 apiRouter.use("/auth", authRouter)
 apiRouter.use("/client", clientRouter)
+apiRouter.use("/freelancer", freelancerRouter)
 
 apiRouter.get("/health", (_request, response) => {
     const body: ApiResponse<{
