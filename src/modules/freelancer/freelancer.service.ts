@@ -16,6 +16,7 @@ import { imageKit } from "../../config/imageKit.js";
 import { randomUUID } from "crypto";
 import { redis } from "../../config/redis.js";
 import { ACCOUNT_AUTH_CACHE_TTL_SECONDS, getAccountAuthCacheKey } from "../../config/constants.js";
+import { createClerkClient } from "@clerk/backend";
 
 export const getFreelancerProfile = async (
   userId: string,
@@ -26,7 +27,7 @@ export const getFreelancerProfile = async (
     .innerJoin(
       accounts,
       and(
-        eq(accounts.auth_id, freelancer_metadata.id),
+        eq(accounts.auth_id, freelancer_metadata.auth_id),
         eq(accounts.role, "FREELANCER"),
       ),
     )
@@ -102,9 +103,9 @@ export const savedFreelancerProfile = async (
     .from(freelancer_portfolios)
     .innerJoin(
       freelancer_metadata,
-      eq(freelancer_portfolios.freelancer_id, input.userId),
+      eq(freelancer_portfolios.freelancer_id, freelancer_metadata.id),
     )
-    .where(eq(freelancer_metadata, input.userId));
+    .where(eq(freelancer_metadata.auth_id, input.userId));
 
   const { uploadedPortfolios, uploadFileIds } = await uploadPortfolioImages(
     input.userId,
@@ -115,9 +116,9 @@ export const savedFreelancerProfile = async (
 
   try {
     profile = await db.transaction(async (transaction) => {
-      const [account] = await transaction
+      let [account] = await transaction
         .update(accounts)
-        .set({ isOnboardingComplete: true })
+        .set({ isOnboardingComplete: true, updated_at: new Date() })
         .where(
           and(
             eq(accounts.auth_id, input.userId),
@@ -125,6 +126,38 @@ export const savedFreelancerProfile = async (
           ),
         )
         .returning();
+
+      if (!account) {
+        const clerk = createClerkClient({ secretKey: env.clerkSecretKey });
+        const clerkUser = await clerk.users.getUser(input.userId).catch(() => null);
+        const email =
+          clerkUser?.primaryEmailAddress?.emailAddress ??
+          clerkUser?.emailAddresses?.at(0)?.emailAddress ??
+          "unknown@onemarketplace.io";
+
+        const now = new Date();
+        const [newAccount] = await transaction
+          .insert(accounts)
+          .values({
+            auth_id: input.userId,
+            email,
+            role: "FREELANCER",
+            identityVerification: false,
+            isOnboardingComplete: true,
+            created_at: now,
+            updated_at: now,
+          })
+          .onConflictDoUpdate({
+            target: [accounts.auth_id, accounts.role],
+            set: {
+              isOnboardingComplete: true,
+              updated_at: now,
+            },
+          })
+          .returning();
+
+        account = newAccount;
+      }
 
       if (!account) throw new ApiError(404, "Freelancer account not found");
 
@@ -149,7 +182,10 @@ export const savedFreelancerProfile = async (
         })
         .onConflictDoUpdate({
           target: freelancer_metadata.auth_id,
-          set: metadataValues,
+          set: {
+            ...metadataValues,
+            updated_at: new Date(),
+          },
         })
         .returning();
 
