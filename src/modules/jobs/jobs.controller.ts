@@ -66,7 +66,7 @@ const buildJobData = (body: Record<string, any>) => {
       (date, index) =>
         !Number.isFinite(date) ||
         date <= Date.now() ||
-        (index > 0 && dates[index - 1]!),
+        (index > 0 && date <= dates[index - 1]!),
     )
   ) {
     throw new ApiError(400, "Milestone due dates to be future and sequential");
@@ -81,13 +81,13 @@ const buildJobData = (body: Record<string, any>) => {
     throw new ApiError(400, "The budget must be between $5 and $1000000");
   }
 
-  const attachment = Array.isArray(body.attachments)
+  const attachments = Array.isArray(body.attachments)
     ? body.attachments.map((item) => {
         const attachment = item as Record<string, string>;
         const fileType = requireText(attachment.fileType, "Attachment type");
         const fileUrl = requireText(attachment.fileUrl, "Attachment url");
 
-        if (fileType! == "application/pdf" && !fileType.startsWith("text/")) {
+        if (fileType !== "application/pdf" && !fileType.startsWith("text/")) {
           throw new ApiError(400, "Only pdf and text documents are allowed");
         }
 

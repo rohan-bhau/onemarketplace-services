@@ -8,9 +8,12 @@ import { env } from "../../config/env.js";
 type JobData = Omit<typeof job_posts.$inferInsert, "client_id">
 type Attachment = NonNullable<JobData["attachments"]>[number]
 
-const deleteDocuments = async(attachments: Attachment[]=[]) =>Promise.allSettled(
-    attachments.filter(({fileId})=>fileId).map(({fileId})=>imageKit.files.delete(fileId))
-)
+const deleteDocuments = async (attachments: Attachment[] = []) =>
+  Promise.allSettled(
+    attachments
+      .filter(({ fileId }) => Boolean(fileId))
+      .map(({ fileId }) => imageKit.files.delete(fileId!)),
+  );
 
 const uploadDocuments = async(userId: string, attachments:Attachment[]=[]) => {
     const uploaded: Attachment[]  = [];
@@ -62,6 +65,7 @@ export const createJobPost = async (
             .insert(job_posts)
             .values({
               ...data,
+              attachments,
               client_id: userId,
             })
             .returning();
@@ -114,7 +118,7 @@ export const updateJobPost = async (
     try {
            [job] = await db
             .update(job_posts)
-            .set({ ...data, updated_at: new Date() })
+            .set({ ...data, attachments, updated_at: new Date() })
             .where(
               and(
                 eq(job_posts.id, jobId),
