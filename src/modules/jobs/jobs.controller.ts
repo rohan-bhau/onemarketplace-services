@@ -164,7 +164,7 @@ export const getClientJobPosts: RequestHandler = asyncHandler(
     response.status(200).json({
       success: true,
       message: "Job posts retrieved",
-      date: jobId ? (jobs[0] ?? null) : jobs,
+      data: jobId ? (jobs[0] ?? null) : jobs,
     });
   },
 );
@@ -181,7 +181,7 @@ export const editClientJobPosts: RequestHandler = asyncHandler(
     response.status(200).json({
       success: true,
       message: "Job post updated",
-      date: job,
+      data: job,
     });
   },
 );
