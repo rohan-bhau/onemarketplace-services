@@ -33,3 +33,11 @@ export const requireWebsite = (value:string | undefined): string =>{
 
     return website
 }
+
+
+export const INITIAL_CONNECTS = 60;
+export const PROPOSAL_CONNECTS = 6;
+export const CONNECTS_CACHE_TTL_SECONDS = 10* 60;
+
+export const getConnectsCachedKey = (userId: string):string => 
+    `connects:${userId}:freelancer`

@@ -17,6 +17,7 @@ import { randomUUID } from "crypto";
 import { redis } from "../../config/redis.js";
 import { ACCOUNT_AUTH_CACHE_TTL_SECONDS, getAccountAuthCacheKey } from "../../config/constants.js";
 import { createClerkClient } from "@clerk/backend";
+import { addConnects } from "../connects/connects.service.js";
 
 export const getFreelancerProfile = async (
   userId: string,
@@ -97,6 +98,7 @@ const uploadPortfolioImages = async (
 
 export const savedFreelancerProfile = async (
   input: SavedFreelancerProfileInput,
+  accountExists: Boolean | undefined,
 ): Promise<FreelancerProfileData> => {
   const existingImages = await db
     .select({ cover_image: freelancer_portfolios.cover_image })
@@ -240,6 +242,15 @@ export const savedFreelancerProfile = async (
       .filter((fileId) => fileId && !retainedImageIds.has(fileId))
       .map((fileId) => imageKit.files.delete(fileId)),
   );
+
+  try {
+    if(!accountExists){
+      await addConnects(input.userId);
+
+    }
+  } catch (error) {
+    console.log(error, "onboarding freelancer's connects adding error")
+  }
 
    await redis.setEx(
       getAccountAuthCacheKey(input.userId, "freelancer"),

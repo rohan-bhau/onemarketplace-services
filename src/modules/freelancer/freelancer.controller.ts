@@ -6,7 +6,7 @@ import { FreelancerProfileData, SavedFreelancerProfileInput } from "./@types.js"
 import { requireText } from "../../config/constants.js";
 import { getFreelancerProfile, savedFreelancerProfile } from "./freelancer.service.js";
 
-const requireFreelancer = (request: Parameters<RequestHandler>[0]) => {
+export const requireFreelancer = (request: Parameters<RequestHandler>[0]) => {
   if (!request.auth) throw new ApiError(401, "Authentication is required.");
 
   if (request.auth.role !== "freelancer") {
@@ -115,7 +115,7 @@ export const upsertFreelancerProfile: RequestHandler = asyncHandler(async(reques
       })
     };
 
-    const profile = await savedFreelancerProfile(input)
+    const profile = await savedFreelancerProfile(input, request.auth?.accountExists)
 
     const body: ApiResponse<FreelancerProfileData> = {
         success: true,

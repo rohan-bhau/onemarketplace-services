@@ -64,6 +64,13 @@
       "when": 1791860989831,
       "tag": "0008_confused_shotgun",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1792790190016,
+      "tag": "0009_solid_mandarin",
+      "breakpoints": true
     }
   ]
 }
