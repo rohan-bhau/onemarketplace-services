@@ -31,5 +31,8 @@ export const env = {
         password: process.env.REDIS_PASSWORD ?? undefined,
         database: parseRedisDatabase(process.env.REDIS_DB)
     },
-    imageKitPrivateKey: process.env.IMAGE_KIT_PRIVATE_KEY
+    imageKitPrivateKey: process.env.IMAGE_KIT_PRIVATE_KEY,
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    freelancerDashboard: process.env.FREELANCER_DASHBOARD
 } as const;

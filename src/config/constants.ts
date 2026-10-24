@@ -41,3 +41,12 @@ export const CONNECTS_CACHE_TTL_SECONDS = 10* 60;
 
 export const getConnectsCachedKey = (userId: string):string => 
     `connects:${userId}:freelancer`
+
+
+export const CONNECTS_PLAN = {
+    20:300,
+    40:600,
+    80:1200
+} as const 
+
+export type ConnectsPlan = keyof typeof CONNECTS_PLAN

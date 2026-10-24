@@ -10,6 +10,9 @@ import { API_PREFIX } from './config/constants.js'
 export const app = express()
 
 app.disable("X-powered-by")
+
+app.use(`${API_PREFIX}/connects/webhook`, express.raw({type: "application/json"}))
+
 app.use(cors())
 app.use(express.json({ limit: "50mb" }))
 app.use(express.urlencoded({ extended: true, limit: "50mb" }))
